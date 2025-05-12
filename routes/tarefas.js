@@ -7,7 +7,7 @@ router.get('/', autenticacao, (req, res) => {
     res.json({mensagem: `Bem vindo ${req.usuario.nome}! Aqui estão suas tarefas disponíveis.`})
 });
 
-router.post('/', autenticacao, tarefaController.criarTarefa)
+router.post('/tarefas', autenticacao, tarefaController.criarTarefa)
 
 router.get('/', autenticacao, tarefaController.listarTarefas)
 
