@@ -89,7 +89,7 @@ O servidor estará disponível em:
 As rotas de tarefas exigem um **token JWT** válido. Após o login, envie o token no cabeçalho:
 
 ```http
-Authorization: Bearer SEU_TOKEN_AQUI
+Authorization: Bearer Seu_Token_Aqui
 ```
 
 ---
@@ -249,13 +249,13 @@ curl -X POST http://localhost:8080/tarefas \
 **Luiz Felipe Meneses**  
 Estudante de Engenharia de Software | Backend e Cibersegurança  
 
-- LinkedIn: [linkedin.com/in/menesesluizf(https://www.linkedin.com/in/menesesluizf)  
+- LinkedIn: https://www.linkedin.com/in/menesesluizf
 - Email: menesesluizf@gmail.com
 
 **Lucas Henrique**
 Estudante de Engenharia de Software | Backend
 
-- LinkedIn: [https://www.linkedin.com/in/lucas-henrique-osouza/(https://www.linkedin.com/in/lucas-henrique-osouza/)
+- LinkedIn: https://www.linkedin.com/in/lucas-henrique-osouza
 
 ---
 
