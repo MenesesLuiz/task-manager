@@ -7,13 +7,13 @@ models = [Tarefa, Usuario]
 class Database {
     constructor() { 
         this.init();
-        this.associate();
     }
 
     async init() {
         this.connection = sequelize;
         models.forEach(model => model.init(this.connection));
-        await this.connection.sync({force: true});
+        this.associate();
+        await this.connection.sync(); 
     }
 
     associate() {
@@ -25,4 +25,4 @@ class Database {
     }
 }
 
-models.exports = new Database();
+module.exports = new Database();
