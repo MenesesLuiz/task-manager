@@ -1,40 +1,28 @@
-const bcrypt = require('bcrypt');
-
-//banco de dados em memoria
-const usuarios = [];
+const Usuario = require('../models/Usuario.js');
+const jwt = require('jsonwebtoken');
 
 exports.registrarUsuario = async (req, res) => {
-  const {nome, email, senha} = req.body;
+    const {nome, email, senha} = req.body;
+ 
+    if (!nome || !email || !senha) {
+        return res.status(400).json({ mensagem: 'Preencha nome, email e senha.' });
+    } 
+    const usuarioExistente = await Usuario.findOne({
+        where: {
+            email: email
+        }
+    });
 
-  if (!nome || !email || !senha) {
-    return res.status(400).json({ mensagem: 'Preencha nome, email e senha.' });
-  }
+    if (usuarioExistente) {
+        return res.status(400).json({mensagem: 'Email já cadastrado.'})
+    }
+    
+    const usuario = await Usuario.create(req.body);
 
-  const existeUsuario = usuarios.find(usuario => usuario.email === email);
-  if (existeUsuario) {
-    return res.status(409).json({ mensagem: 'Email já registrado.' });
-  }
+    const {id} = usuario;
 
-  try {
-    const senhaCriptografada = await bcrypt.hash(senha, 10);
-
-    const novoUsuario = {
-      id: Date.now(),
-      nome,
-      email,
-      senha: senhaCriptografada
-    };
-
-    usuarios.push(novoUsuario);
-
-    return res.status(201).json({ mensagem: 'Usuário registrado com sucesso.' });
-  } catch (erro) {
-    return res.status(500).json({ mensagem: 'Erro no servidor', erro: erro.message });
-  }
+    return res.status(201).json({id, nome, email});
 };
-
-
-const jwt = require('jsonwebtoken');
 
 exports.loginUsuario = async (req, res) => {
     const {email, senha} = req.body;
@@ -43,21 +31,26 @@ exports.loginUsuario = async (req, res) => {
         return res.status(400).json({mensagem: 'Preencha os campos de email e senha.'})
     }
 
-    const usuario = usuarios.find(u => u.email === email);
+    const usuario = await Usuario.findOne({
+        where: {
+            email: email
+        }
+    })
+ 
     if (!usuario) {
         return res.status(401).json({mensagem: 'Email ou senha inválidos'})
     }
 
-    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
-    if (!senhaCorreta) {
+    if (!(await usuario.checkPassword(senha))) {
         return res.status(401).json({mensagem: 'Email ou senha inválidos.'})
     }
 
+    const {id, nome} = usuario;
+
     const token = jwt.sign(
-        {id: usuario.id, email: usuario.email, nome: usuario.nome},
-        'Seguro',
+        {id: id, email: email, nome: nome}, 'Seguro',
         {expiresIn: '1h'}
-    );
+    ); 
 
     return res.status(200).json({mensagem: 'Login realizado com sucesso', token});
 };

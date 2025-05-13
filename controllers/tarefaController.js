@@ -1,55 +1,53 @@
-let tarefas = [];
+const Tarefa = require('../models/Tarefa.js');
 
-exports.criarTarefa = (req, res) => {
-    const {titulo, descricao, concluida} = req.body;
+exports.criarTarefa = async (req, res) => {
+    const {titulo, descricao, usuario_id} = req.body;
 
     if (!titulo || !descricao) {
         return res.status(400).json({ mensagem: 'Título e descrição são obrigatórios.' });
     }
+    
+    const tarefa = await Tarefa.create(req.body);
 
-    const novaTarefa = {
-        id: Date.now().toString(),
-        titulo,
-        descricao,
-        concluida,
-        usuarioId: req.usuario.id,
-    };
-
-    tarefas.push(novaTarefa);
-
-    res.status(201).json({ mensagem: 'Tarefa criada com sucesso.', tarefa: novaTarefa });
+    res.status(201).json({ mensagem: 'Tarefa criada com sucesso.', tarefa});
 };
 
-exports.listarTarefas = (req, res) => {
-    const tarefasDoUsuario = tarefas.filter(t => t.usuarioId === req.usuario.id);
+exports.listarTarefas = async (req, res) => {
+    const tarefasDoUsuario = await Tarefa.findAll({
+        attributes: {exclude: ['UsuarioId']},
+    }); 
     res.json(tarefasDoUsuario);
 };
 
-exports.editarTarefa = (req, res) => {
+exports.editarTarefa = async (req, res) => {
     const id = req.params.id;
-    const{titulo, descricao, concluida} = req.body;
+    const{titulo, descricao, status} = req.body;
 
-    const tarefa = tarefas.find(t => t.id === id && t.usuarioId === req.usuarioId);
+    const tarefa = await Tarefa.findByPk(id, {
+        attributes: {exclude: ['UsuarioId']}
+    });
+    
     if (!tarefa) {
         return res.status(404).json({mensagem: 'Tarefa não encontrada ou não autorizada.'});
     }
 
-    if (titulo) tarefa.titulo = titulo;
-    if (descricao) tarefa.descricao = descricao;
-    if (concluida !== undefined) tarefa.concluida = concluida;
+    await tarefa.update({titulo, descricao, status});
 
-    res.json({mensagem: 'Tarefa atualizada com sucesso.', tarefa})
+    res.json({mensagem: 'Tarefa atualizada com sucesso.', tarefa});
 };
 
-exports.deletarTarefa = (req, res) => {
+exports.deletarTarefa = async (req, res) => {
     const id = req.params.id;
 
-    const index = tarefas.findIndex(t => t.id === id && t.usuario === req.usuarioId);
-    if (index === -1) {
-        return res.status(404).json({mensagem: 'Tarefa não encontrada ou não autorizada.'})
+    const tarefa = await Tarefa.findByPk(id, {
+        attributes: {exclude: ['UsuarioId']}
+    });
+    
+    if (!tarefa) {
+        return res.status(404).json({mensagem: 'Tarefa não encontrada.'});
     }
 
-    tarefas.splice(index, 1);
+    await tarefa.destroy(); 
 
     res.status(204).json({mensagem: 'Tarefa excluída com êxito.', tarefa});
 };
