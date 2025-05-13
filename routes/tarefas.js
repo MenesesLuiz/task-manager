@@ -3,17 +3,17 @@ const router = express.Router();
 const autenticacao = require('../middlewares/authMiddleware');
 const tarefaController = require('../controllers/tarefaController')
 
-router.get('/', autenticacao, (req, res) => {
+router.get('/hello', autenticacao, (req, res) => {
     res.json({mensagem: `Bem vindo ${req.usuario.nome}! Aqui estão suas tarefas disponíveis.`})
 });
 
-router.post('/tarefas', autenticacao, tarefaController.criarTarefa)
+router.post('/', autenticacao, tarefaController.criarTarefa)
 
 router.get('/', autenticacao, tarefaController.listarTarefas)
 
-router.put('tarefas/:id', autenticacao, tarefaController.editarTarefa)
+router.put('/:id', autenticacao, tarefaController.editarTarefa)
 
-router.delete('tarefas/:id', autenticacao, tarefaController.deletarTarefa)
+router.delete('/:id', autenticacao, tarefaController.deletarTarefa)
 
 
 module.exports = router;
