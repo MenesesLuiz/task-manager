@@ -1,141 +1,270 @@
+# ✅ Gerenciador de Tarefas com Autenticação JWT, Node.js, Express, Sequelize e SQLite
 
-# Gerenciador de Tarefas com Node.js (Backend)
+Este projeto é uma **API RESTful completa** de um sistema de gerenciamento de tarefas com autenticação segura via **JWT**. Desenvolvido com **Node.js**, **Express**, **Sequelize** e **SQLite**, o sistema permite que usuários possam **se registrar, fazer login e gerenciar suas tarefas de forma segura**, com rotas protegidas e criptografia de senha com **bcrypt**.
 
-Este é um projeto de **gerenciador de tarefas básico** com autenticação usando **Node.js**, **Express**, e **JWT (JSON Web Token)**. O sistema permite:
-
-- Registro de usuário
-- Login com geração de token
-- Criação, leitura, atualização e exclusão de tarefas (CRUD)
-- Autenticação protegendo rotas com JWT
+O projeto segue boas práticas de desenvolvimento com **estrutura em camadas (MVC)**, banco de dados relacional com **relacionamento entre usuários e tarefas**, e foi criado com fins educacionais para aprofundar o domínio de backend moderno e segurança em APIs.
 
 ---
 
-## 📁 Estrutura de Pastas e Arquivos
+## 🚀 Funcionalidades
+
+- Registro e login de usuários com senha criptografada (`bcrypt`)
+- Autenticação via `JWT` com expiração de 1h
+- Middleware de autenticação protegendo rotas privadas
+- CRUD completo de tarefas
+- Associação direta entre usuários e tarefas
+- Banco de dados SQLite com Sequelize ORM
+- Estrutura de projeto modularizada por responsabilidade
+
+---
+
+## 🧠 Tecnologias Utilizadas
+
+- Node.js
+- Express
+- Sequelize ORM
+- SQLite
+- JWT
+- Bcrypt
+- Nodemon (ambiente de dev)
+- UUID (instalado, mas ainda não utilizado)
+
+---
+
+## 🧱 Estrutura de Pastas
 
 ```
-task-manager/
-├── controllers/
-│   ├── authController.js
-│   └── tarefaController.js
-│
-├── middlewares/
-│   └── authMiddleware.js
-│
-├── routes/
-│   ├── auth.js
-│   └── tarefas.js
-│
-├── public/             <- (Frontend será construído aqui)
-│
-├── index.js              <- Arquivo principal do servidor Express
-├── package.json
+📁 raiz
+├── index.js                # Ponto de entrada do app
+├── package.json            # Dependências e scripts
+├── /data
+│   └── tarefas.db          # Banco de dados SQLite
+├── /config
+│   ├── index.js            # Inicializa os modelos e o DB
+│   └── /database
+│       └── database.js     # Configuração do Sequelize
+├── /controllers
+│   ├── authController.js   # Lógica de login e registro
+│   └── tarefaController.js # CRUD de tarefas
+├── /middlewares
+│   └── authMiddleware.js   # Middleware para validar JWT
+├── /models
+│   ├── Usuario.js          # Modelo de usuário
+│   └── Tarefa.js           # Modelo de tarefa
+├── /routes
+│   ├── auth.js             # Rotas de autenticação
+│   └── tarefas.js          # Rotas de tarefas
 ```
 
 ---
 
-## 📂 Explicações dos Arquivos
+## 🛠️ Como Executar
 
-### 🔧 `index.js`
-Arquivo principal da aplicação. Ele:
-- Inicia o servidor Express
-- Aplica middlewares (como `express.json`)
-- Usa as rotas definidas em `/routes`
+1. Clone o projeto:
 
----
-
-### 📁 `controllers/`
-
-#### `authController.js`
-Controla a lógica de autenticação:
-- `registrarUsuario`: Cadastra novos usuários e salva em memória (mock de banco de dados).
-- `loginUsuario`: Valida email/senha, gera token JWT.
-
-#### `tarefaController.js`
-Controla as operações de tarefas:
-- `criarTarefa`: Cria uma nova tarefa ligada ao usuário autenticado.
-- `listarTarefas`: Retorna apenas as tarefas do usuário.
-- `atualizarTarefa`: Permite editar título e status (concluída).
-- `deletarTarefa`: Remove a tarefa.
-
----
-
-### 📁 `middlewares/`
-
-#### `authMiddleware.js`
-Middleware que:
-- Lê o token JWT do header `Authorization`
-- Verifica sua validade
-- Injeta o usuário decodificado na requisição (`req.usuario`)
-
-Usado para proteger rotas que exigem autenticação.
-
----
-
-### 📁 `routes/`
-
-#### `auth.js`
-Define rotas públicas:
-- `POST /auth/registrar`: Cadastro
-- `POST /auth/login`: Login
-
-#### `tarefas.js`
-Define rotas protegidas por autenticação:
-- `POST /tarefas`: Criação de tarefas
-- `GET /tarefas`: Lista todas as tarefas do usuário autenticado
-- `PUT /tarefas/:id`: Atualiza uma tarefa
-- `DELETE /tarefas/:id`: Deleta uma tarefa
-
----
-
-## 🚀 Como rodar o projeto
-
-1. Clone o repositório:
 ```bash
 git clone https://github.com/MenesesLuiz/task-manager.git
 cd task-manager
 ```
 
 2. Instale as dependências:
+
 ```bash
-npm install (dependências do package.json)
+npm install
 ```
 
-3. Inicie o servidor:
+3. Inicie o servidor (modo desenvolvimento):
+
 ```bash
-node app.js
+npm run dev
 ```
 
-Servidor será iniciado em `http://localhost:3000`.
+O servidor estará disponível em:  
+🔗 `http://localhost:8080`
 
 ---
 
-## 📌 Observações
+## 🔐 Autenticação JWT
 
-- O sistema ainda **não possui persistência de dados real** (não usa banco de dados).
-- As informações de usuários e tarefas estão em **arrays em memória**, e serão perdidas ao reiniciar o servidor.
-- JWT é usado para proteger as rotas privadas.
-- O frontend será adicionado na pasta `/public`.
+As rotas de tarefas exigem um **token JWT** válido. Após o login, envie o token no cabeçalho:
 
----
-
-## 🔐 Exemplo de uso com token
-
-Após login, envie o token nas requisições às rotas protegidas:
-
-```
-GET /tarefas
-Authorization: Bearer SEU_TOKEN_JWT
+```http
+Authorization: Bearer SEU_TOKEN_AQUI
 ```
 
 ---
 
-## ✨ Próximas etapas
+## 📬 Endpoints da API
 
-- [x] Backend funcional com autenticação JWT
-- [ ] Implementação do frontend com HTML/CSS/JS puro
-- [ ] Integração frontend-backend com fetch()
-- [ ] Substituição do "banco de dados em memória" por MySQL
+### 🔹 Registrar novo usuário
+
+**POST** `/auth/registrar`
+
+**Corpo da requisição:**
+
+```json
+{
+  "nome": "Luiz",
+  "email": "luiz@email.com",
+  "senha": "senha123"
+}
+```
 
 ---
 
-Feito por Luiz Felipe.
+### 🔹 Login de usuário
+
+**POST** `/auth/login`
+
+**Corpo da requisição:**
+
+```json
+{
+  "email": "luiz@email.com",
+  "senha": "senha123"
+}
+```
+
+**Resposta:**
+
+```json
+{
+  "mensagem": "Login realizado com sucesso",
+  "token": "Token disponível aqui"
+}
+```
+
+---
+
+### 🔹 Criar tarefa (protegido)
+
+**POST** `/tarefas`
+
+**Headers:**
+
+```
+Authorization: Bearer Seu_Token_Aqui
+```
+
+**Body:**
+
+```json
+{
+  "titulo": "Estudar Node.js",
+  "descricao": "Aprender sobre middleware e JWT",
+  "usuario_id": 1
+}
+```
+
+---
+
+### 🔹 Listar tarefas do usuário
+
+**GET** `/tarefas`
+
+**Headers:**
+
+```
+Authorization: Bearer Seu_Token_Aqui
+```
+
+---
+
+### 🔹 Atualizar tarefa
+
+**PUT** `/tarefas/:id`
+
+**Headers:**
+
+```
+Authorization: Bearer Seu_Token_Aqui
+```
+
+**Body:**
+
+```json
+{
+  "titulo": "Estudar Sequelize",
+  "descricao": "Modelagem de tabelas",
+  "status": "em andamento"
+}
+```
+
+---
+
+### 🔹 Deletar tarefa
+
+**DELETE** `/tarefas/:id`
+
+**Headers:**
+
+```
+Authorization: Bearer Seu_Token_Aqui
+```
+
+---
+
+## 📟 Exemplos com CURL
+
+### Registrar
+
+```bash
+curl -X POST http://localhost:8080/auth/registrar \
+-H "Content-Type: application/json" \
+-d '{"nome":"Joao","email":"joao@email.com","senha":"123456"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:8080/auth/login \
+-H "Content-Type: application/json" \
+-d '{"email":"joao@email.com","senha":"123456"}'
+```
+
+### Criar Tarefa
+
+```bash
+curl -X POST http://localhost:8080/tarefas \
+-H "Authorization: Bearer Seu_Token_Aqui" \
+-H "Content-Type: application/json" \
+-d '{"titulo":"Aprender Sequelize","descricao":"Estudo de models","usuario_id":1}'
+```
+
+---
+
+## 🚧 Melhorias Futuras
+
+- Validação com Joi/Yup
+- Refresh Token
+- Upload de arquivos nas tarefas
+- Integração com frontend (React ou Vue)
+- Testes automatizados (Jest)
+- Deploy em ambiente cloud (Render, Railway, Vercel)
+
+---
+
+## 👨‍💻 Autores
+
+**Luiz Felipe Meneses**  
+Estudante de Engenharia de Software | Backend e Cibersegurança  
+
+- LinkedIn: [linkedin.com/in/menesesluizf(https://www.linkedin.com/in/menesesluizf)  
+- Email: menesesluizf@gmail.com
+
+**Lucas Henrique**
+Estudante de Engenharia de Software | Backend
+
+- LinkedIn: [https://www.linkedin.com/in/lucas-henrique-osouza/(https://www.linkedin.com/in/lucas-henrique-osouza/)
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT.  
+Sinta-se livre para usar, estudar, modificar e contribuir.
+
+---
+
+> “A prática constante constrói a maestria.”  
+> Projeto desenvolvido com dedicação para aprofundar habilidades reais em backend e segurança. 🚀
