@@ -1,8 +1,9 @@
 const { Sequelize } = require('sequelize');
+const path = require('path');
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: ':memory',
+    storage: path.resolve(__dirname, '../../data/tarefas.db'),
     logging: false
 });
 
