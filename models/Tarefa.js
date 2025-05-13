@@ -1,13 +1,14 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes, Model, Sequelize } = require('sequelize');
 
-class Tarefas extends Model {
+class Tarefa extends Model {
     static init(sequelize) {
         super.init({
             id: {
-                type: DataTypes.UUID,
-                primaryKey: true, 
+                type: Sequelize.INTEGER,
+                primaryKey: true,  
+                autoIncrement: true
             },
-            nome: {
+            titulo: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
@@ -16,23 +17,23 @@ class Tarefas extends Model {
                 allowNull: false
             },
             status: {
-                type: DataTypes.STRING,
+                type: DataTypes.ENUM('pendente', 'em andamento', 'concluida'),
+                defaultValue: 'pendente',
                 allowNull: false
             }
         }, {
             sequelize,
-            tableName: {
-                singular: 'tarefa',
-                plural: 'tarefas'
-            }
+            modelName: 'Tarefa',
+            tableName: 'tarefas' 
         });
     }
 
     static associate(models) {
         this.belongsTo(models.Usuario, {
-            foreignKey: 'usuario_id'
+            foreignKey: 'usuario_id',
+            onDelete: 'CASCADE',
         });
     }
 }
 
-module.exports = Tarefas;
+module.exports = Tarefa;
